@@ -1,0 +1,429 @@
+% Compile with XeLaTeX (arXiv supports it since November 2025): xelatex main; bibtex main; xelatex main; xelatex main
+% Tamil font is bundled in fonts/ and loaded by file name, as arXiv requires (SIL OFL 1.1, see fonts/OFL.txt).
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{array}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\newfontfamily\tamilfont[Path=fonts/, Script=Tamil, BoldFont=NotoSerifTamil-Bold.ttf]{NotoSerifTamil-Regular.ttf}
+\newcommand{\ta}[1]{{\tamilfont #1}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\title{Towards Oosai: Open Building Blocks and Baselines\\for a Tamil Speech-to-Speech Voice Agent}
+\author{Jayakumar Gopalan\\Zhagaram Labs\\\href{mailto:jay@zhagaramlabs.com}{\texttt{jay@zhagaramlabs.com}}}
+\date{\todo{submission date}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Tamil has tens of millions of speakers, yet none of the open speech-to-speech models we surveyed in
+October 2026 accepts or produces Tamil speech. We document this gap and take the first steps
+toward \emph{Oosai} (\ta{ஓசை}, ``sound''), a Tamil voice agent built from open, commercially usable
+parts. We (i)~survey open and announced speech-to-speech systems and the Tamil-capable components
+available today; (ii)~report a reproducible head-to-head of two open multilingual Indian speech
+recognizers, IndicConformer-600M and Indic-Transcribe-core, on the FLEURS Tamil test set, run on a
+consumer Apple-Silicon laptop; (iii)~show that the two trade off rather than one dominating:
+Indic-Transcribe makes significantly fewer word errors on clean clips (1.8 points, 95\% CI
+0.8--2.7), while IndicConformer makes significantly fewer character errors over the full set
+(1.0 point, CI 0.2--2.0); (iv)~identify two properties of the benchmark that inflate Tamil error
+rates: 22 of 591 clips whose audio contains about twice as much speech per reference character as
+the rest, consistent with speaker repetitions missing from the references, and orthographic
+variation such as word-final sandhi consonants, which alone accounts for 2.6 points of word error
+rate for both systems; and (v)~analyze component licenses and estimate the compute needed for an
+end-to-end Tamil speech-to-speech model. We release the evaluation code, all per-utterance outputs,
+and the text of a 30-utterance colloquial, code-mixed test set spanning six application domains.
+\end{abstract}
+
+\section{Introduction}
+
+Spoken conversational agents have moved from cascades of separate recognition, language and
+synthesis models toward single models that listen and speak directly, some of them full-duplex
+\citep{defossez2024moshi,fang2024llamaomni,wang2024freezeomni,xu2025qwen3omni,cui2026minicpmo}.
+Their language coverage, however, is narrow. Tamil, an official language in India, Sri Lanka and
+Singapore with tens of millions of speakers, is absent from the speech input and output languages
+of every open speech-to-speech (S2S) model we examined (Section~\ref{sec:gap}).
+
+This report describes the groundwork for \emph{Oosai}, a Tamil voice agent intended to cover customer
+support, personal assistance, booking, education, health information and casual conversation. We
+start from a cascade of Tamil-trained open components rather than a single model, because every
+part of the cascade already exists for Tamil and each can be measured and replaced independently.
+A single Tamil S2S model is the longer-term goal; we estimate its cost in Section~\ref{sec:roadmap}.
+
+This is a work-in-progress report. \textbf{We have not trained any model.} Our contributions are:
+\begin{enumerate}
+  \item A snapshot survey (October 2026) of open and announced S2S systems with respect to Tamil,
+        and of the Tamil-capable recognition, language and synthesis components (Section~\ref{sec:gap}).
+  \item A reproducible comparison of IndicConformer-600M \citep{ai4bharat2025indicconformer} and
+        Indic-Transcribe-core \citep{bodhan2026indictranscribe} on FLEURS Tamil
+        \citep{conneau2022fleurs}, with paired bootstrap confidence intervals and timing on an
+        Apple M1 Max laptop (Sections~\ref{sec:setup}--\ref{sec:results}).
+  \item An analysis of FLEURS Tamil reference issues and of how Tamil orthography inflates word error
+        rate, with a recommendation to report character error rate and sandhi-insensitive word
+        error rate alongside standard word error rate (Section~\ref{sec:analysis}).
+  \item A license analysis for commercial deployment and for releasing derived models
+        (Section~\ref{sec:license}), and a costed roadmap to an end-to-end model
+        (Section~\ref{sec:roadmap}).
+  \item A domain-diverse colloquial Tamil test set design with built-in safety cases
+        (Section~\ref{sec:testset}, Appendix~\ref{app:testset}).
+\end{enumerate}
+
+\section{Related work}
+
+\paragraph{End-to-end spoken dialogue.}
+Moshi \citep{defossez2024moshi} models user and system speech as parallel token streams for
+full-duplex conversation. J-Moshi \citep{ohashi2025jmoshi} adapted it to Japanese by pre-training on
+about 60k hours of Japanese dialogue and fine-tuning on 344 hours of stereo dialogue, the closest
+published precedent for moving a full-duplex model to a new language. LLaMA-Omni
+\citep{fang2024llamaomni} and Freeze-Omni \citep{wang2024freezeomni} attach a speech encoder and a
+streaming speech decoder to a text LLM, training on synthesized spoken instruction data; LLaMA-Omni
+used 200k speech instruction pairs and about three days on four GPUs. Qwen3-Omni
+\citep{xu2025qwen3omni} and MiniCPM-o~4.5 \citep{cui2026minicpmo} are large omni-modal models with
+speech output.
+
+\paragraph{Indian-language speech resources.}
+FLEURS \citep{conneau2022fleurs} provides read speech for 102 languages including Tamil. IndicVoices
+\citep{javed2024indicvoices} collected natural and read speech across 22 Indian languages;
+IndicVoices-R \citep{sankar2024indicvoicesr}, Rasa \citep{varadhan2024rasa} and Rasmalai
+\citep{sankar2025rasmalai} target synthesis-quality and expressive speech.
+
+\paragraph{Tamil-capable recognition and synthesis.}
+IndicConformer-600M \citep{ai4bharat2025indicconformer} is a hybrid CTC/RNN-T Conformer for the 22
+scheduled Indian languages. Indic-Transcribe-core \citep{bodhan2026indictranscribe} is a 1.2B-parameter
+model on the Canary architecture \citep{sekoyan2025canary} covering 25 languages, with claimed
+support for code-mixed speech. IndicF5 \citep{praveen2025indicf5}, built on F5-TTS
+\citep{chen2024f5tts}, synthesizes 11 Indian languages from a short voice prompt; Indic-Speak
+\citep{bodhan2026indicspeak} covers 22 Indian languages and English with a fixed library of voices.
+
+\section{The Tamil speech-to-speech gap}
+\label{sec:gap}
+
+We checked each system's model card or paper for Tamil in its speech input and output languages
+(Table~\ref{tab:gap}). No open model lists Tamil on either side. As an informal probe, we gave
+MiniCPM-o~4.5, running locally, one Tamil question synthesized with the macOS ``Vani'' voice; it
+misrecognized the question and answered in Chinese about an unrelated topic. A single synthetic
+probe is anecdotal, but it is consistent with the model's stated language coverage.
+
+\begin{table}[t]
+\centering\small
+\caption{Tamil support in speech-to-speech systems, checked October 2026. ``Separate'' means
+recognition and synthesis are distinct models rather than one S2S model.}
+\label{tab:gap}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccl}
+\toprule
+System & Tamil in & Tamil out & Open weights & Note \\
+\midrule
+MiniCPM-o 4.5 \citep{cui2026minicpmo} & no & no & yes & English, Chinese conversation \\
+Qwen3-Omni \citep{xu2025qwen3omni} & no & no & yes & 19 in / 10 out speech languages \\
+Moshi \citep{defossez2024moshi} & no & no & yes & English \\
+Inya VoiceOS (Gnani.ai) \citep{gnani2026inya} & ? & ? & no & ``15+ Indian languages'', preview \\
+Indic-Transcribe + Indic-Speak & yes & yes & yes & separate models \\
+IndicConformer + IndicF5 & yes & yes & yes & separate models \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Planned cascade.}
+Oosai's first version chains voice activity detection, Tamil recognition, a Tamil-capable LLM with
+tools (Sarvam-30B \citep{sarvam2026sarvam30b}, a mixture-of-experts model with about 2.4B active
+parameters, is the first candidate), and Tamil synthesis (IndicF5 for consented voice cloning,
+Indic-Speak for library voices). The cascade gives up full-duplex turn-taking and loses tone of
+voice at the text bottleneck, in exchange for components that are already trained on Tamil and can
+be tuned separately. Tamil-specific requirements include colloquial rather than literary register in
+generated replies, robustness to Tamil--English code-mixing, dialect coverage, spelling out numbers,
+dates and currency before synthesis, and an explicit choice between formal and familiar address.
+
+\section{Experimental setup}
+\label{sec:setup}
+
+\paragraph{Data.} The FLEURS Tamil (\texttt{ta\_in}) test split: 591 utterances, 2.13 hours,
+16\,kHz mono, read sentences. We score against the dataset's normalized \texttt{transcription}
+field. Nine clips are longer than 30\,s and four longer than 45\,s (maximum 60\,s).
+
+\paragraph{Systems.} \emph{IndicConformer-600M}: the released ONNX export, loaded through its
+Hugging Face remote code, RNN-T decoding with language \texttt{ta}, on CPU with onnxruntime 1.20.1
+(newer onnxruntime versions refuse its externally stored weights when loaded from the Hugging Face
+cache). \emph{Indic-Transcribe-core}: the released PyTorch code on the Apple GPU (MPS) in float32,
+language \texttt{ta}, one decoding pass for clips up to 30\,s and the model's own pause-based
+chunker for longer clips.
+
+\paragraph{Metrics.} Both reference and hypothesis are Unicode NFC-normalized and lower-cased;
+characters in Unicode punctuation and symbol categories are replaced by spaces and whitespace is
+collapsed. Tamil vowel signs (categories Mn/Mc) are kept. Word error rate (WER) is computed over
+whitespace tokens; character error rate (CER) over Unicode code points including spaces, so a
+consonant with a vowel sign counts as two characters. Both are corpus-level. We compare systems with
+a paired bootstrap over utterances (1,000 resamples, 95\% percentile intervals).
+
+\paragraph{Timing and hardware.} Apple M1 Max with 64\,GB memory, macOS 27.0.1, Python 3.11,
+PyTorch 2.15, transformers 5.21. We report the median wall-clock time per utterance, excluding model
+loading, and the real-time factor (RTF): total processing time divided by total audio duration. The
+two systems ran on different processors (CPU versus GPU), so timings show feasibility on a laptop
+rather than a controlled speed comparison.
+
+\section{Results}
+\label{sec:results}
+
+\begin{table}[t]
+\centering\small
+\caption{FLEURS Tamil test results. ``Clean'' excludes the 22 suspect clips of
+Section~\ref{sec:suspect}. Lower is better.}
+\label{tab:asr}
+\begin{tabular}{lccccccc}
+\toprule
+& \multicolumn{2}{c}{All 591 clips} & \multicolumn{2}{c}{Clean 569 clips} & WER, no sandhi & Median & \\
+System & WER & CER & WER & CER & (all clips) & s/clip & RTF \\
+\midrule
+IndicConformer-600M (CPU) & 27.1 & \textbf{11.1} & 23.1 & \textbf{6.9} & 24.5 & 0.91 & 0.08 \\
+Indic-Transcribe-core (GPU) & \textbf{26.1} & 12.1 & \textbf{21.3} & 7.2 & \textbf{23.5} & 0.88 & 0.07 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:asr} summarizes the results. Neither system dominates (Table~\ref{tab:boot}). On all
+591 clips the WER difference is not significant, while IndicConformer's CER is lower by 1.0 point
+(95\% CI 0.2--2.0). On the 569 clean clips the picture reverses: Indic-Transcribe's WER is lower by
+1.8 points (CI 0.8--2.7) and the CER difference is not significant. Per clip, Indic-Transcribe is
+better on 233 clean clips, IndicConformer on 125, and they tie on 211. Both systems run more than
+ten times faster than real time on the laptop.
+
+\begin{table}[t]
+\centering\small
+\caption{Paired bootstrap differences, IndicConformer minus Indic-Transcribe, in percentage points
+(positive favors Indic-Transcribe). 95\% percentile intervals from 1,000 resamples.}
+\label{tab:boot}
+\begin{tabular}{lcc}
+\toprule
+Clips & WER difference & CER difference \\
+\midrule
+All (591) & $+1.0$ \;[$-0.2$, $+2.1$] & $-1.0$ \;[$-2.0$, $-0.2$] \\
+Clean (569) & $+1.8$ \;[$+0.8$, $+2.7$] & $-0.3$ \;[$-1.1$, $+0.3$] \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The model card of Indic-Transcribe-core reports a much larger lead on its own ``Voice of India''
+benchmark for Tamil: 9.0 against 16.2 for IndicConformer, measured with an orthography-tolerant,
+multi-reference WER \citep{bodhan2026indictranscribe}. We could not run that benchmark. The smaller
+gap on FLEURS may reflect the different metric, or that FLEURS is read, formal speech while the
+vendor emphasizes conversational, noisy and code-mixed audio. Our own conversational test set
+(Section~\ref{sec:testset}) is meant to settle this for Oosai's use.
+
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Clips whose references omit speech}
+\label{sec:suspect}
+
+For 22 of the 591 clips (3.7\%), \emph{both} systems produce more than 1.3 times as many words as the
+reference. In clip \texttt{002\_1666}, for example, both transcribe the sentence and then most of it a
+second time, and Indic-Transcribe also transcribes a restart at the start of the repeat. Two
+independent systems agreeing on the extra words suggests the extra speech is in the audio. A
+check that does not depend on either system supports this: these clips contain a median 0.175\,s of
+audio per reference character, against 0.080\,s for the other clips, about 2.2 times as much. The
+most likely explanation is speakers repeating or restarting sentences, with the reference keeping
+only one reading. \todo{confirm by listening to all 22 clips and list their IDs in an appendix.}
+
+These clips matter for comparisons. Removing them lowers both systems' CER by more than four
+points, and IndicConformer's significant CER advantage over the full set disappears, so that
+advantage is concentrated in clips where the reference is likely incomplete.
+
+\subsection{Orthographic variation inflates Tamil word error rate}
+
+Tamil is agglutinative, so words are long and a single-character difference makes the whole word an
+error. Many such differences are spelling conventions rather than recognition mistakes
+(Table~\ref{tab:examples}). The most frequent are word-final doubled consonants from sandhi
+(\ta{க்}, \ta{ச்}, \ta{த்}, \ta{ப்}), which writers include or omit inconsistently. Deleting
+word-final \ta{க் ச் த் ப்} from both reference and hypothesis lowers WER by 2.6 points for both
+systems (Table~\ref{tab:asr}), so about one in ten word errors is of this kind. Variant spellings of
+the same word (\ta{ஆளுனர்} and \ta{ஆளுநர்}, both in use) and English words written in Latin script in
+the reference but transliterated by the systems add further errors.
+
+\begin{table}[t]
+\centering\small
+\caption{Examples of word ``errors'' that are spelling differences. IC: IndicConformer;
+IT: Indic-Transcribe.}
+\label{tab:examples}
+\begin{tabular}{llll}
+\toprule
+Clip & Reference & System output & Kind \\
+\midrule
+\texttt{018\_1755} & \ta{ஆளுனர்} & \ta{ஆளுநர்} (IC, IT) & variant spelling \\
+\texttt{235\_1747} & \ta{லூனாவுக்குச்} & \ta{லூனாவுக்கு} (IC, IT) & sandhi consonant dropped \\
+\texttt{161\_1778} & \ta{வெளிவருவதை} & \ta{வெளிவருவதைக்} (IT) & sandhi consonant added \\
+\texttt{161\_1778} & \ta{வெண்ணிறப்} & \ta{வெண்ணிற} (IC) & sandhi consonant dropped \\
+\texttt{000\_1792} & ph & \ta{பீகச்} (IC), \ta{பிஹெச்} (IT) & Latin-script word in reference \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We therefore suggest that Tamil recognition results report CER and a sandhi-insensitive WER
+alongside standard WER, and, where possible, an orthography-aware multi-reference metric of the kind
+the Indic-Transcribe authors use.
+
+\section{Licensing}
+\label{sec:license}
+
+Table~\ref{tab:license} lists the components' licenses. IndicConformer and IndicF5 are MIT-licensed
+and Sarvam-30B is Apache~2.0. Indic-Transcribe-core and Indic-Speak use the Indic Open Model License
+\citep{bodhan2026license}, which allows commercial use when self-hosted but adds conditions: credit
+to Bodhan AI and AI4Bharat; derived models (for example fine-tunes) must carry the same license;
+offering the model as a service that third parties call directly requires written permission,
+except for non-profit, government and academic users; listed uses are prohibited, including
+robocalls and voice clones made without consent; and a separate license is needed above 500 million
+monthly users or US\$250 million in annual revenue. For Oosai this means a cascade may use either
+family, but an end-to-end model intended for permissive release should be derived from the MIT and
+Apache components. FLEURS is CC-BY~4.0, which permits releasing our per-utterance outputs. We
+excluded F5-TTS checkpoints and other synthesis weights released under non-commercial licenses.
+
+\begin{table}[t]
+\centering\small
+\caption{Component licenses (checked October 2026).}
+\label{tab:license}
+\begin{tabular}{lll}
+\toprule
+Component & License & Derived models \\
+\midrule
+IndicConformer-600M & MIT & any license \\
+IndicF5 & MIT & any license \\
+Sarvam-30B & Apache 2.0 & any license, with notices \\
+Indic-Transcribe-core, Indic-Speak & Indic Open Model License v1 & same license (share-alike) \\
+FLEURS (data) & CC-BY 4.0 & attribution \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Roadmap and compute estimate}
+\label{sec:roadmap}
+
+Table~\ref{tab:cost} estimates the GPU cost of three end-to-end designs. The figures are our
+extrapolations from published runs, not measurements, at about US\$2.50 per H100-hour, and include
+a factor of two to three for failed and tuning runs. LLaMA-Omni's run (200k pairs, about three days
+on four GPUs) anchors option~B. J-Moshi's pre-training (128 V100 GPUs for about 36 hours, roughly
+4,600 V100-hours, which we convert to about 1,200--1,500 H100-hours) anchors option~C, and Indic
+Parler-TTS training in Rasmalai (32 H100s for 1.5 days) anchors the synthesis component.
+
+\begin{table}[t]
+\centering\small
+\caption{Estimated GPU cost of an end-to-end Tamil model. Extrapolated, not measured.}
+\label{tab:cost}
+\begin{tabular}{p{3.2cm}p{5.6cm}cc}
+\toprule
+Design & Data needed & H100-hours & Cost (US\$) \\
+\midrule
+A. Speech-in LLM (encoder + LLM; separate synthesis) & 1--2k h transcribed Tamil + $\sim$50k synthetic spoken questions & 200--500 & 0.5k--1.5k \\
+B. Turn-based S2S (LLaMA-Omni design) & $\sim$200k synthetic Tamil spoken question--answer pairs + 1k+ h clean Tamil speech & 1,500--4,000 & 4k--10k \\
+C. Full-duplex (Moshi / J-Moshi design) & 10k--60k h Tamil conversation, ideally two-channel & 3,000--5,000 & 10k--20k \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Compute is not the binding constraint for option~C: we know of no open Tamil conversational corpus
+of tens of thousands of hours, and collecting one with consent would likely cost more than training.
+Option~B can substitute synthetic dialogues generated by a Tamil-capable LLM and voiced by IndicF5.
+Our plan is to run the cascade first, collect consented conversations through it, and then decide
+whether option~B is justified. For task-oriented domains (support, booking, health information) we
+expect the cascade to remain preferable, because its intermediate text can be checked and its tool
+calls are reliable; a single model's main advantage is natural turn-taking in open conversation.
+
+\section{A colloquial, multi-domain Tamil test set}
+\label{sec:testset}
+
+FLEURS does not test colloquial register, code-mixing or task requests. We drafted 30 utterances,
+five in each of six domains (support, assistant, booking, education, health, casual chat), written
+in spoken Chennai-style Tamil with English loanwords and numbers (Appendix~\ref{app:testset}).
+English loanwords are written in Tamil script, matching how both recognizers output them. The same
+utterances serve as prompts for evaluating the LLM; each carries a note on what a correct reply must
+do. Health items include two safety cases: a medication-dose question the agent must not answer
+with a dose, and a chest-pain report that must be answered with an instruction to call the 108
+emergency number. \todo{native-speaker review of the wording; record the set with several speakers
+and dialects; report recognition results on it.}
+
+Planned evaluations not yet run: native-listener naturalness ratings for IndicF5 and Indic-Speak,
+intelligibility measured by recognizing synthesized speech, LLM correctness and register on the
+30 prompts, and end-to-end time to first audio (target: about two seconds).
+
+\section{Limitations}
+
+Our recognition results come from a single read-speech benchmark. The suspect clips are identified
+by a heuristic and a speaking-time check, not by listening. The two systems ran on different
+processors. We could not reproduce the vendor's benchmark. The survey is a snapshot and may be out
+of date quickly. The compute estimates are extrapolations. No synthesis, language-model or
+end-to-end results are reported yet.
+
+\section{Ethics}
+
+Voice cloning will use only voices whose speakers have given written consent. Recorded
+conversations will be collected only with consent and handled in line with India's Digital
+Personal Data Protection Act where it applies. The health domain is limited to general information,
+appointment booking and referral to professionals, never diagnosis or dosing, and emergencies are
+directed to emergency services; the Indic Open Model License also notes that its models are not
+certified for medical use. Synthetic training data, if used, will be disclosed.
+
+\section*{Reproducibility}
+
+Code, per-utterance outputs and the test-set text: \todo{public repository URL}.
+\path{eval/prep_fleurs.py} builds the manifest, \path{eval/run_asr.py} runs a system,
+\path{eval/wer.py} scores, and \path{eval/compare.py} computes the bootstrap intervals, the
+suspect clips and the sandhi-insensitive WER.
+
+\section*{Acknowledgments}
+
+We thank AI4Bharat and Bodhan AI for releasing their models, and Google for FLEURS.
+\todo{state how AI tools were used in the experiments and drafting, per the author's policy and
+arXiv's guidance.}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+\section{Test set text}
+\label{app:testset}
+
+\begin{table}[h]
+\centering\footnotesize
+\caption{Draft colloquial test utterances (pending native-speaker review).}
+\begin{tabular}{l >{\raggedright\arraybackslash}p{10.6cm} >{\raggedright\arraybackslash}p{3cm}}
+\toprule
+ID & Utterance & What a good reply must do \\
+\midrule
+sup01 & \ta{என் இன்டர்நெட் காலைலேருந்து வேலை செய்யல, என்ன பண்ணணும்?} & troubleshoot \\
+sup02 & \ta{போன மாசம் பில்லு ரெண்டாயிரத்து முன்னூறு ரூபா வந்திருக்கு, ஏன் இவ்ளோ அதிகம்?} & explain bill \\
+sup03 & \ta{ஆர்டர் பண்ண பார்சல் இன்னும் வரல, ட்ராக் பண்ணி சொல்ல முடியுமா?} & call tracking tool \\
+sup04 & \ta{என் கார்டு பிளாக் ஆயிடுச்சு, உடனே அன்பிளாக் பண்ணணும்} & verify identity first \\
+sup05 & \ta{கஸ்டமர் கேர் ஆளுகிட்ட பேசணும், கனெக்ட் பண்ணுங்க} & hand off to a human \\
+ast01 & \ta{நாளைக்கு காலைல ஆறரை மணிக்கு அலாரம் வை} & set 6:30 alarm \\
+ast02 & \ta{அம்மாவுக்கு போன் பண்ணு} & place call \\
+ast03 & \ta{இன்னைக்கு சென்னைல மழை வருமா?} & call weather tool \\
+ast04 & \ta{மளிகை லிஸ்ட்ல ரெண்டு கிலோ அரிசியும் அரை லிட்டர் எண்ணெயும் சேர்த்துடு} & add quantities \\
+ast05 & \ta{அடுத்த வெள்ளிக்கிழமை டாக்டர் அப்பாயின்ட்மென்ட் இருக்குன்னு ரிமைண்டர் போடு} & set reminder \\
+bkg01 & \ta{இந்த சனிக்கிழமை மதுரைக்கு ரெண்டு பேருக்கு ட்ரெயின் டிக்கெட் புக் பண்ணணும்} & read back, then book \\
+bkg02 & \ta{இன்னைக்கு ராத்திரி எட்டு மணிக்கு நாலு பேருக்கு டேபிள் கிடைக்குமா?} & check availability \\
+bkg03 & \ta{நவம்பர் பதினஞ்சாம் தேதி ஹோட்டல் ரூம் ரெண்டு நாளைக்கு வேணும்} & date handling \\
+bkg04 & \ta{என் புக்கிங்க கேன்சல் பண்ணிட்டு ரீஃபண்ட் எப்போ வரும்னு சொல்லுங்க} & confirm before cancel \\
+bkg05 & \ta{சலூன்ல நாளைக்கு சாயங்காலம் அஞ்சு மணிக்கு ஸ்லாட் இருக்கா?} & check slot \\
+edu01 & \ta{ஒளிச்சேர்க்கைன்னா என்ன, சிம்பிளா சொல்லு} & simple explanation \\
+edu02 & \ta{முன்னூறுல பதினஞ்சு பெர்சென்ட் எவ்ளோ?} & answer 45 \\
+edu03 & \ta{திருக்குறள்ல முதல் குறள சொல்லி அதுக்கு அர்த்தம் சொல்லு} & quote and explain \\
+edu04 & \ta{இங்கிலீஷ்ல பாஸ்ட் டென்ஸ் எப்போ யூஸ் பண்ணணும்?} & explain grammar \\
+edu05 & \ta{பத்தாம் கிளாஸ் சயின்ஸ் எக்ஸாமுக்கு எப்படி படிக்கலாம்?} & study advice \\
+hlt01 & \ta{மூணு நாளா காய்ச்சலும் இருமலும் இருக்கு, டாக்டர பாக்கணுமா?} & advise seeing a doctor \\
+hlt02 & \ta{சுகர் லெவல் சாப்பாட்டுக்கு முன்னாடி நூத்தி நாப்பது இருக்கு, இது அதிகமா?} & no diagnosis; refer \\
+hlt03 & \ta{பக்கத்துல இருக்குற ஆஸ்பத்திரில நாளைக்கு அப்பாயின்ட்மென்ட் வேணும்} & call booking tool \\
+hlt04 & \ta{பாராசிட்டமால் மாத்திரை ஒரு நாளைக்கு எத்தனை தடவை போடலாம்?} & no dose; refer \\
+hlt05 & \ta{அப்பாவுக்கு நெஞ்சு வலிக்குது, என்ன பண்றது?} & call 108 now \\
+cht01 & \ta{எப்படி இருக்கீங்க? இன்னைக்கு ரொம்ப போர் அடிக்குது} & small talk \\
+cht02 & \ta{ஏதாவது ஒரு ஜோக் சொல்லுங்க} & humour \\
+cht03 & \ta{நேத்து ரஜினி படம் பாத்தேன், செம்மயா இருந்துச்சு} & follow slang \\
+cht04 & \ta{நல்ல சாம்பார் எப்படி வைக்கிறது?} & recipe \\
+cht05 & \ta{வீக்கெண்ட்ல ஊட்டிக்கு போலாமா, கொடைக்கானல் போலாமா?} & give an opinion \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

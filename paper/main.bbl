@@ -1,0 +1,167 @@
+\begin{thebibliography}{20}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[{AI4Bharat}(2025)]{ai4bharat2025indicconformer}
+{AI4Bharat}.
+\newblock {IndicConformer-600M-Multi}.
+\newblock Model card,
+  \url{https://huggingface.co/ai4bharat/indic-conformer-600m-multilingual},
+  2025.
+
+\bibitem[{Bodhan AI}(2026)]{bodhan2026license}
+{Bodhan AI}.
+\newblock {Indic Open Model License, v1}.
+\newblock \url{https://github.com/Bodhan-AI/bodhan-model-info}, 2026.
+
+\bibitem[{Bodhan AI} and {AI4Bharat}(2026{\natexlab{a}})]{bodhan2026indicspeak}
+{Bodhan AI} and {AI4Bharat}.
+\newblock {Indic-Speak: Text-to-Speech for 22 Indian Languages and English}.
+\newblock Model card, \url{https://huggingface.co/bodhan-ai/indic-speak},
+  2026{\natexlab{a}}.
+
+\bibitem[{Bodhan AI} and
+  {AI4Bharat}(2026{\natexlab{b}})]{bodhan2026indictranscribe}
+{Bodhan AI} and {AI4Bharat}.
+\newblock {Indic-Transcribe-core}.
+\newblock Model card,
+  \url{https://huggingface.co/bodhan-ai/indic-transcribe-core},
+  2026{\natexlab{b}}.
+
+\bibitem[Chen et~al.(2024)Chen, Niu, Ma, Deng, Wang, Zhao, Yu, and
+  Chen]{chen2024f5tts}
+Yushen Chen, Zhikang Niu, Ziyang Ma, Keqi Deng, Chunhui Wang, Jian Zhao, Kai
+  Yu, and Xie Chen.
+\newblock {F5-TTS: A Fairytaler that Fakes Fluent and Faithful Speech with Flow
+  Matching}.
+\newblock arXiv:2410.06885, 2024.
+
+\bibitem[Conneau et~al.(2022)Conneau, Ma, Khanuja, Zhang, Axelrod, Dalmia,
+  Riesa, Rivera, and Bapna]{conneau2022fleurs}
+Alexis Conneau, Min Ma, Simran Khanuja, Yu~Zhang, Vera Axelrod, Siddharth
+  Dalmia, Jason Riesa, Clara Rivera, and Ankur Bapna.
+\newblock {FLEURS: Few-shot Learning Evaluation of Universal Representations of
+  Speech}.
+\newblock arXiv:2205.12446, 2022.
+
+\bibitem[Cui et~al.(2026)Cui, Xu, Wang, Yu, Sun, Xu, Wang, He, Ma, Cai, Gui,
+  Zhang, Sun, Huang, Chen, Lin, Liu, Gui, Han, Wen, Liu, Wang, Zhang, Wei,
+  Chen, Li, Fang, Zhou, Li, Zeng, Xiao, Lin, Han, Sun, Liu, and
+  Yao]{cui2026minicpmo}
+Junbo Cui, Bokai Xu, Chongyi Wang, Tianyu Yu, Weiyue Sun, Yingjing Xu, Tianran
+  Wang, Zhihui He, Wenshuo Ma, Tianchi Cai, Jiancheng Gui, Luoyuan Zhang, Xian
+  Sun, Fuwei Huang, Moye Chen, Zhuo Lin, Hanyu Liu, Qingxin Gui, Qingzhe Han,
+  Yuyang Wen, Huiping Liu, Rongkang Wang, Yaqi Zhang, Hongliang Wei, Chi Chen,
+  You Li, Kechen Fang, Jie Zhou, Yuxuan Li, Guoyang Zeng, Chaojun Xiao, Yankai
+  Lin, Xu~Han, Maosong Sun, Zhiyuan Liu, and Yuan Yao.
+\newblock {MiniCPM-o 4.5: Towards Real-Time Full-Duplex Omni-Modal
+  Interaction}.
+\newblock arXiv:2604.27393, 2026.
+
+\bibitem[Défossez et~al.(2024)Défossez, Mazaré, Orsini, Royer, Pérez,
+  Jégou, Grave, and Zeghidour]{defossez2024moshi}
+Alexandre Défossez, Laurent Mazaré, Manu Orsini, Amélie Royer, Patrick
+  Pérez, Hervé Jégou, Edouard Grave, and Neil Zeghidour.
+\newblock {Moshi: a speech-text foundation model for real-time dialogue}.
+\newblock arXiv:2410.00037, 2024.
+
+\bibitem[Fang et~al.(2024)Fang, Guo, Zhou, Ma, Zhang, and
+  Feng]{fang2024llamaomni}
+Qingkai Fang, Shoutao Guo, Yan Zhou, Zhengrui Ma, Shaolei Zhang, and Yang Feng.
+\newblock {LLaMA-Omni: Seamless Speech Interaction with Large Language Models}.
+\newblock arXiv:2409.06666, 2024.
+
+\bibitem[Javed et~al.(2024)Javed, Nawale, George, Joshi, Bhogale, Mehendale,
+  Sethi, Ananthanarayanan, Faquih, Palit, Ravishankar, Sukumaran, Panchagnula,
+  Murali, Gandhi, R, M, Vaijayanthi, Karunganni, Kumar, and
+  Khapra]{javed2024indicvoices}
+Tahir Javed, Janki~Atul Nawale, Eldho~Ittan George, Sakshi Joshi,
+  Kaushal~Santosh Bhogale, Deovrat Mehendale, Ishvinder~Virender Sethi, Aparna
+  Ananthanarayanan, Hafsah Faquih, Pratiti Palit, Sneha Ravishankar, Saranya
+  Sukumaran, Tripura Panchagnula, Sunjay Murali, Kunal~Sharad Gandhi,
+  Ambujavalli R, Manickam~K M, C~Venkata Vaijayanthi, Krishnan
+  Srinivasa~Raghavan Karunganni, Pratyush Kumar, and Mitesh~M Khapra.
+\newblock {IndicVoices: Towards building an Inclusive Multilingual Speech
+  Dataset for Indian Languages}.
+\newblock arXiv:2403.01926, 2024.
+
+\bibitem[Ohashi et~al.(2025)Ohashi, Iizuka, Jiang, and
+  Higashinaka]{ohashi2025jmoshi}
+Atsumoto Ohashi, Shinya Iizuka, Jingjing Jiang, and Ryuichiro Higashinaka.
+\newblock {Towards a Japanese Full-duplex Spoken Dialogue System}.
+\newblock arXiv:2506.02979, 2025.
+
+\bibitem[{Open Source For You}(2026)]{gnani2026inya}
+{Open Source For You}.
+\newblock {India Unveils First 5B Voice AI}.
+\newblock
+  \url{https://www.opensourceforu.com/2026/02/india-unveils-first-5b-voice-ai/},
+  2026.
+
+\bibitem[Sankar et~al.(2024)Sankar, Anand, Varadhan, Thomas, Singal, Kumar,
+  Mehendale, Krishana, Raju, and Khapra]{sankar2024indicvoicesr}
+Ashwin Sankar, Srija Anand, Praveen~Srinivasa Varadhan, Sherry Thomas, Mehak
+  Singal, Shridhar Kumar, Deovrat Mehendale, Aditi Krishana, Giri Raju, and
+  Mitesh Khapra.
+\newblock {IndicVoices-R: Unlocking a Massive Multilingual Multi-speaker Speech
+  Corpus for Scaling Indian TTS}.
+\newblock arXiv:2409.05356, 2024.
+
+\bibitem[Sankar et~al.(2025)Sankar, Lacombe, Thomas, Varadhan, Gandhi, and
+  Khapra]{sankar2025rasmalai}
+Ashwin Sankar, Yoach Lacombe, Sherry Thomas, Praveen~Srinivasa Varadhan,
+  Sanchit Gandhi, and Mitesh~M Khapra.
+\newblock {RASMALAI: Resources for Adaptive Speech Modeling in Indian Languages
+  with Accents and Intonations}.
+\newblock arXiv:2505.18609, 2025.
+
+\bibitem[{Sarvam AI}(2026)]{sarvam2026sarvam30b}
+{Sarvam AI}.
+\newblock {Sarvam-30B}.
+\newblock Model card, \url{https://huggingface.co/sarvamai/sarvam-30b}, 2026.
+
+\bibitem[Sekoyan et~al.(2025)Sekoyan, Koluguri, Tadevosyan, Zelasko, Bartley,
+  Karpov, Balam, and Ginsburg]{sekoyan2025canary}
+Monica Sekoyan, Nithin~Rao Koluguri, Nune Tadevosyan, Piotr Zelasko, Travis
+  Bartley, Nikolay Karpov, Jagadeesh Balam, and Boris Ginsburg.
+\newblock {Canary-1B-v2 \& Parakeet-TDT-0.6B-v3: Efficient and High-Performance
+  Models for Multilingual ASR and AST}.
+\newblock arXiv:2509.14128, 2025.
+
+\bibitem[V et~al.(2025)V, Anand, Siddhartha, and Khapra]{praveen2025indicf5}
+Praveen~S V, Srija Anand, Soma Siddhartha, and Mitesh~M. Khapra.
+\newblock {IndicF5: High-Quality Text-to-Speech for Indian Languages}.
+\newblock \url{https://github.com/AI4Bharat/IndicF5}, 2025.
+
+\bibitem[Varadhan et~al.(2024)Varadhan, Sankar, Raju, and
+  Khapra]{varadhan2024rasa}
+Praveen~Srinivasa Varadhan, Ashwin Sankar, Giri Raju, and Mitesh~M. Khapra.
+\newblock {Rasa: Building Expressive Speech Synthesis Systems for Indian
+  Languages in Low-resource Settings}.
+\newblock arXiv:2407.14056, 2024.
+
+\bibitem[Wang et~al.(2024)Wang, Li, Fu, Shen, Xie, Li, Sun, and
+  Ma]{wang2024freezeomni}
+Xiong Wang, Yangze Li, Chaoyou Fu, Yunhang Shen, Lei Xie, Ke~Li, Xing Sun, and
+  Long Ma.
+\newblock {Freeze-Omni: A Smart and Low Latency Speech-to-speech Dialogue Model
+  with Frozen LLM}.
+\newblock arXiv:2411.00774, 2024.
+
+\bibitem[Xu et~al.(2025)Xu, Guo, Hu, Chu, Wang, He, Wang, Shi, He, Zhu, Lv,
+  Wang, Guo, Wang, Ma, Zhang, Zhang, Hao, Guo, Yang, Zhang, Ma, Wei, Bai, Chen,
+  Liu, Wang, Yang, Liu, Ren, Zheng, Men, Zhou, Yu, Yang, Yu, Zhou, and
+  Lin]{xu2025qwen3omni}
+Jin Xu, Zhifang Guo, Hangrui Hu, Yunfei Chu, Xiong Wang, Jinzheng He, Yuxuan
+  Wang, Xian Shi, Ting He, Xinfa Zhu, Yuanjun Lv, Yongqi Wang, Dake Guo,
+  He~Wang, Linhan Ma, Pei Zhang, Xinyu Zhang, Hongkun Hao, Zishan Guo, Baosong
+  Yang, Bin Zhang, Ziyang Ma, Xipin Wei, Shuai Bai, Keqin Chen, Xuejing Liu,
+  Peng Wang, Mingkun Yang, Dayiheng Liu, Xingzhang Ren, Bo~Zheng, Rui Men, Fan
+  Zhou, Bowen Yu, Jianxin Yang, Le~Yu, Jingren Zhou, and Junyang Lin.
+\newblock {Qwen3-Omni Technical Report}.
+\newblock arXiv:2509.17765, 2025.
+
+\end{thebibliography}

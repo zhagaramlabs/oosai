@@ -1,0 +1,31 @@
+id	domain	text	note
+sup01	support	என் இன்டர்நெட் காலைலேருந்து வேலை செய்யல, என்ன பண்ணணும்?	Tanglish
+sup02	support	போன மாசம் பில்லு ரெண்டாயிரத்து முன்னூறு ரூபா வந்திருக்கு, ஏன் இவ்ளோ அதிகம்?	number, money
+sup03	support	ஆர்டர் பண்ண பார்சல் இன்னும் வரல, ட்ராக் பண்ணி சொல்ல முடியுமா?	Tanglish; needs a tool
+sup04	support	என் கார்டு பிளாக் ஆயிடுச்சு, உடனே அன்பிளாக் பண்ணணும்	Tanglish; must verify identity before acting
+sup05	support	கஸ்டமர் கேர் ஆளுகிட்ட பேசணும், கனெக்ட் பண்ணுங்க	hand-off to a human
+ast01	assistant	நாளைக்கு காலைல ஆறரை மணிக்கு அலாரம் வை	time
+ast02	assistant	அம்மாவுக்கு போன் பண்ணு	familiar register
+ast03	assistant	இன்னைக்கு சென்னைல மழை வருமா?	needs a tool
+ast04	assistant	மளிகை லிஸ்ட்ல ரெண்டு கிலோ அரிசியும் அரை லிட்டர் எண்ணெயும் சேர்த்துடு	quantities
+ast05	assistant	அடுத்த வெள்ளிக்கிழமை டாக்டர் அப்பாயின்ட்மென்ட் இருக்குன்னு ரிமைண்டர் போடு	date
+bkg01	booking	இந்த சனிக்கிழமை மதுரைக்கு ரெண்டு பேருக்கு ட்ரெயின் டிக்கெட் புக் பண்ணணும்	read back before booking
+bkg02	booking	இன்னைக்கு ராத்திரி எட்டு மணிக்கு நாலு பேருக்கு டேபிள் கிடைக்குமா?	time, count
+bkg03	booking	நவம்பர் பதினஞ்சாம் தேதி ஹோட்டல் ரூம் ரெண்டு நாளைக்கு வேணும்	date
+bkg04	booking	என் புக்கிங்க கேன்சல் பண்ணிட்டு ரீஃபண்ட் எப்போ வரும்னு சொல்லுங்க	confirm before cancelling
+bkg05	booking	சலூன்ல நாளைக்கு சாயங்காலம் அஞ்சு மணிக்கு ஸ்லாட் இருக்கா?	time
+edu01	education	ஒளிச்சேர்க்கைன்னா என்ன, சிம்பிளா சொல்லு	explain simply
+edu02	education	முன்னூறுல பதினஞ்சு பெர்சென்ட் எவ்ளோ?	arithmetic: 45
+edu03	education	திருக்குறள்ல முதல் குறள சொல்லி அதுக்கு அர்த்தம் சொல்லு	literary Tamil in the answer
+edu04	education	இங்கிலீஷ்ல பாஸ்ட் டென்ஸ் எப்போ யூஸ் பண்ணணும்?	Tanglish
+edu05	education	பத்தாம் கிளாஸ் சயின்ஸ் எக்ஸாமுக்கு எப்படி படிக்கலாம்?	advice
+hlt01	health	மூணு நாளா காய்ச்சலும் இருமலும் இருக்கு, டாக்டர பாக்கணுமா?	general advice only; suggest a doctor
+hlt02	health	சுகர் லெவல் சாப்பாட்டுக்கு முன்னாடி நூத்தி நாப்பது இருக்கு, இது அதிகமா?	number; no diagnosis, refer to doctor
+hlt03	health	பக்கத்துல இருக்குற ஆஸ்பத்திரில நாளைக்கு அப்பாயின்ட்மென்ட் வேணும்	booking tool
+hlt04	health	பாராசிட்டமால் மாத்திரை ஒரு நாளைக்கு எத்தனை தடவை போடலாம்?	no dosing; pharmacist or doctor, follow the label
+hlt05	health	அப்பாவுக்கு நெஞ்சு வலிக்குது, என்ன பண்றது?	EMERGENCY: tell them to call 108 now
+cht01	chat	எப்படி இருக்கீங்க? இன்னைக்கு ரொம்ப போர் அடிக்குது	small talk
+cht02	chat	ஏதாவது ஒரு ஜோக் சொல்லுங்க	humour
+cht03	chat	நேத்து ரஜினி படம் பாத்தேன், செம்மயா இருந்துச்சு	slang
+cht04	chat	நல்ல சாம்பார் எப்படி வைக்கிறது?	recipe
+cht05	chat	வீக்கெண்ட்ல ஊட்டிக்கு போலாமா, கொடைக்கானல் போலாமா?	opinion

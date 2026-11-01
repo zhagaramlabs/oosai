@@ -1,0 +1,11 @@
+.venv/
+eval/data/
+models/
+__pycache__/
+*.wav
+*.aiff
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.out
+data/
