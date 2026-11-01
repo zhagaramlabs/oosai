@@ -473,8 +473,8 @@ Only worth starting after the pipeline works and real conversation data exists. 
   run as modules from the repo root, e.g. `.venv/bin/python -m agent.rules` for its
   self-check); `eval/` holds the tests and benchmarks; `prompts/` the system prompts. Number
   words come from [`uraikal.numbers`](https://github.com/zhagaramlabs/uraikal), Zhagaram's Tamil text
-  library: `uv pip install --python .venv/bin/python -e ../uraikal` from a lab checkout, or
-  `uraikal` from PyPI once released.
+  library: `uv pip install --python .venv/bin/python uraikal` (on PyPI), or `-e ../uraikal`
+  to work on both at once.
 - **IndicConformer needs onnxruntime 1.20.1** (the version its card pins). onnxruntime 1.31
   refuses to load it ("External data path escapes model directory") because the Hugging Face
   cache stores its weight files as symlinks into `blobs/`.
