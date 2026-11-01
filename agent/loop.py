@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "eval"))
 from agent import rules  # noqa: E402
 from agent.llm import Sarvam  # noqa: E402
-from agent.numbers_ta import speak_digits  # noqa: E402
+from uraikal.numbers import speak_digits  # noqa: E402
 
 
 def vani():

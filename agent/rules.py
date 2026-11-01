@@ -18,7 +18,7 @@ import ast
 import operator
 import re
 
-from agent.numbers_ta import to_digits, to_words
+from uraikal.numbers import to_digits, to_words
 
 EMERGENCY_REPLY = "இது அவசரம் மாதிரி இருக்கு. உடனே நூத்தியெட்டுக்கு கால் பண்ணுங்க."
 DOSE_REPLY = ("மருந்தோட அளவை என்னால சொல்ல முடியாது. உங்க டாக்டர் இல்லன்னா மருந்தாளர்கிட்ட கேளுங்க, "

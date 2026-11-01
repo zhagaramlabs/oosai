@@ -1,6 +1,6 @@
 # Oosai — a Tamil speech-to-speech voice agent
 
-Updated: 2026-10-29 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
+Updated: 2026-10-31 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
 push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far)
 · Git repo initialized, nothing committed yet
 
@@ -354,7 +354,7 @@ Only worth starting after the pipeline works and real conversation data exists. 
        இதைப் பண்ணட்டுமா?"). A yes runs nothing yet (tools are stubs); the arguments are kept,
        marked unverified, for real tools to check.
      - **Calculator:** Sarvam can't do sums from Tamil number words (1 of 4 right without
-       thinking; with thinking 20+ s and it read முன்னூறுல பதினஞ்சு as 115%). `agent/numbers_ta.py`
+       thinking; with thinking 20+ s and it read முன்னூறுல பதினஞ்சு as 115%). `uraikal.numbers`
        turns number words into digits (and back, for the TTS; round-trip tested 0–120,000 and
        up to crores). With digits, a short prompt gets the sum right for 7 of 9 test questions.
        Code evaluates it (only + − × ÷) and says the sum as well as the answer, so a wrong sum
@@ -375,7 +375,7 @@ Only worth starting after the pipeline works and real conversation data exists. 
    only, not for the product); `--wav a.wav b.wav` runs recorded turns without the mic.
    - **Pipeline:** mic (sounddevice, 16 kHz) → Indic-Transcribe-core (Mac GPU) →
      `agent/rules.py` + Sarvam 30B (`agent/llm.py`) → digits as Tamil words
-     (`agent/numbers_ta.py`) → Indic-Speak Anitha, one sentence at a time while the previous
+     (`uraikal.numbers`) → Indic-Speak Anitha, one sentence at a time while the previous
      one plays. It keeps a pending action between turns, so a read-back can be answered with
      ஆமா or வேண்டாம். Replies are saved as wav files.
    - **Tested with 6 recorded turns** (Vani voice: alarm, ஆமாம், 15% of 300, chest pain, card,
@@ -469,9 +469,12 @@ Only worth starting after the pipeline works and real conversation data exists. 
   accelerate datasets ema_pytorch librosa pypinyin torchdiffeq x_transformers jieba matplotlib
   torchcodec` (not wandb: it pulls in an unknown beta package, and only IndicF5's training code
   needs it). For the voice loop: `sounddevice` (mic and speaker).
-- **Code layout:** `agent/` is the assistant (`rules.py`, `llm.py`, `numbers_ta.py`, `loop.py`;
+- **Code layout:** `agent/` is the assistant (`rules.py`, `llm.py`, `loop.py`;
   run as modules from the repo root, e.g. `.venv/bin/python -m agent.rules` for its
-  self-check); `eval/` holds the tests and benchmarks; `prompts/` the system prompts.
+  self-check); `eval/` holds the tests and benchmarks; `prompts/` the system prompts. Number
+  words come from [`uraikal.numbers`](https://github.com/zhagaramlabs/uraikal), Zhagaram's Tamil text
+  library: `uv pip install --python .venv/bin/python -e ../uraikal` from a lab checkout, or
+  `uraikal` from PyPI once released.
 - **IndicConformer needs onnxruntime 1.20.1** (the version its card pins). onnxruntime 1.31
   refuses to load it ("External data path escapes model directory") because the Hugging Face
   cache stores its weight files as symlinks into `blobs/`.
@@ -574,7 +577,7 @@ Suggested timing: submit after Phase 0 is complete, so the paper also has TTS an
    Thirukkural tool is the proposed fix.
    The rules live in code (`agent/rules.py`, §7 step 4): about 19 of 30 good, 4 wrong, every
    safety case passes. Native review needed for `prompts/style_ta.txt`, the fixed replies in
-   `agent/rules.py` and the number words in `agent/numbers_ta.py`.
+   `agent/rules.py` and the number words in `uraikal.numbers`.
 4. **Speed (Phase 1 step 6):** run Indic-Speak's Llama-3.2-3B on llama.cpp or MLX (or a rented
    GPU) and stream Sarvam's reply into the TTS sentence by sentence; target first audio ≤2 s.
 5. **Accuracy:** a fresh set of test questions (the rules were tuned on these 30), a sturdier
