@@ -83,7 +83,7 @@ mic → [turn detection] → [Tamil speech recognition] → [LLM brain + tools] 
 | Turn detection | Silero VAD, or Pipecat Smart Turn | Silero responds faster; Smart Turn handles pauses better | open | — |
 | Orchestration | Pipecat (or LiveKit Agents) | Streaming, interruptions, tool calls | open | — |
 
-**Licenses ruled out for commercial use:**
+**Licences to secure.** These were ruled out for commercial use. Since 2026-11-02 the user secures licences, so they are candidates again, judged on quality:
 - Dhee-Indic-F5 and F5-TTS weights: CC-BY-NC.
 - Fish Speech and OmniVoice weights: non-commercial.
 - Community Tamil fine-tunes of IndicF5 with no stated license.
@@ -410,7 +410,7 @@ Only worth starting after the pipeline works and real conversation data exists. 
 6. Move to Pipecat with streaming and turn detection, and measure the time to first audio.
    Use Smart Turn v3 as-is (BSD-2, about 8M parameters). Its 23 languages don't include Tamil,
    so first score it on Uraikal C2's Tamil clips: cut-ins during mid-thought pauses, false stops
-   on ம்ம்/ஆமா/சரி, and the delay after a real end. That's Murai v0 in VISION.md; a Tamil
+   on ம்ம்/ஆமா/சரி, and the delay after a real end. That's Tharunam v0 in VISION.md; a Tamil
    fine-tune (v1) waits on two-channel Ootru conversations.
 
 **Phase 2: tune without big training**
