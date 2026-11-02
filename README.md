@@ -1,6 +1,6 @@
 # Oosai — a Tamil speech-to-speech voice agent
 
-Updated: 2026-10-31 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
+Updated: 2026-11-01 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
 push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far)
 · Git repo initialized, nothing committed yet
 
@@ -430,6 +430,13 @@ Only worth starting after the pipeline works and real conversation data exists. 
 | Brain | Correctness, spoken naturalness (1–5, native rater), tool chosen and inputs right | 20–50 scripted Tamil requests |
 | Text-to-speech | Naturalness rated by native listeners; clarity checked by running speech recognition on the output; similarity to the cloned voice | 10–20 sentences |
 | End to end | Time to first audio, total turn time, task success | Scripted spoken calls |
+
+Scores for Oosai's parts now also go to the [Uraikal leaderboard](https://zhagaramlabs.com/leaderboard/)
+(2026-11-01). `eval/uraikal_hyps.py` writes IndicConformer and Indic-Transcribe transcripts of any Uraikal
+manifest (Kathbath as well as FLEURS), and `eval/uraikal_classics.py` runs Uraikal's Thirukkural track
+on Sarvam 30B. On FLEURS, Uraikal's scorer gives the same WERs as `eval/wer.py`: 27.1% and 26.1%.
+On Kathbath's 4,401 test clips the two models tie: 21.5% of words wrong for known speakers and 23.4% for
+new ones, with only 30% of transcripts identical. Whisper large-v3-turbo gets 67.6% and 67.2%.
 
 ---
 
