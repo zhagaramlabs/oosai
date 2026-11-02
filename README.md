@@ -152,7 +152,7 @@ Only worth starting after the pipeline works and real conversation data exists. 
   | IndicVoices (`ai4bharat/IndicVoices`) | CC-BY-4.0 | yes | not checked (gated); all languages 23.7k h, 11.2k transcribed (Dec 2025) | ears |
   | Kathbath (`ai4bharat/Kathbath`) | CC-BY-4.0 | yes | not checked (gated); 1,684 h over 12 languages | ears, eval |
   | Vaani (`ARTPARK-IISc/Vaani`) | CC-BY-4.0 | yes | 848 h audio, 24 h transcribed | unlabelled pre-training |
-  | Shrutilipi (`ai4bharat/Shrutilipi`) | CC-BY-4.0 | **risky**: audio is All India Radio news (Prasar Bharati copyright) | ~790 h | ears, only after clearing rights |
+  | Shrutilipi (`ai4bharat/Shrutilipi`) | CC-BY-4.0 | **risky**: audio is All India Radio news (Prasar Bharati copyright) | 462 h Tamil (281,508 clips, measured 2026-11-02 from the download; this row said ~790 h before) | ears, only after clearing rights |
   | Mozilla Common Voice (ta) | CC0 | yes | not checked | ears; since Oct 2025 only on Mozilla Data Collective, not HF |
   | OpenSLR 65 | CC-BY-SA 4.0 | share-alike | small | skip |
   | Microsoft Speech Corpus (Indian languages) | research only | **no** | — | ruled out |
