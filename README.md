@@ -1,6 +1,6 @@
 # Oosai — a Tamil speech-to-speech voice agent
 
-Updated: 2026-11-01 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
+Updated: 2026-11-02 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
 push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far)
 · Git repo initialized, nothing committed yet
 
@@ -87,6 +87,11 @@ mic → [turn detection] → [Tamil speech recognition] → [LLM brain + tools] 
 - Dhee-Indic-F5 and F5-TTS weights: CC-BY-NC.
 - Fish Speech and OmniVoice weights: non-commercial.
 - Community Tamil fine-tunes of IndicF5 with no stated license.
+- LiquidAI LFM3-Omni-2B (checked 2026-11-02): one 2.2B model that hears, thinks and speaks, small
+  enough to run in a browser on WebGPU. LFM Open License v1.0: commercial use is void for any
+  company with $10M or more in yearly revenue, and the limit passes on to fine-tunes. Also no Tamil:
+  not among its 16 text or 19 speech languages, and its tokenizer spends 5.20 tokens per Tamil word
+  (D4.web) and cuts letters in 99% of words. Worth re-checking if Liquid adds Tamil or relicenses.
 
 **Indic Open Model License (Bodhan AI models), checked 2026-10-28:** allows commercial use
 when self-hosted, with conditions: credit "Built with <model> from Bodhan AI / AI4Bharat";
@@ -403,6 +408,10 @@ Only worth starting after the pipeline works and real conversation data exists. 
        couplets (public-domain text), not the model's memory.
      A 0.1 s tap made the recogniser invent a word; recordings under 0.5 s are now ignored.
 6. Move to Pipecat with streaming and turn detection, and measure the time to first audio.
+   Use Smart Turn v3 as-is (BSD-2, about 8M parameters). Its 23 languages don't include Tamil,
+   so first score it on Uraikal C2's Tamil clips: cut-ins during mid-thought pauses, false stops
+   on ம்ம்/ஆமா/சரி, and the delay after a real end. That's Murai v0 in VISION.md; a Tamil
+   fine-tune (v1) waits on two-channel Ootru conversations.
 
 **Phase 2: tune without big training**
 
