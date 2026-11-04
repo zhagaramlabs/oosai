@@ -4,6 +4,8 @@ Oosai is a research prototype of a Tamil voice agent: speech recognition, a Tami
 speech synthesis in one loop, with the safety rules in code. Issues and pull requests are welcome, in
 Tamil or English.
 
+Everyone here follows our [Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately, as in [SECURITY.md](SECURITY.md), not in a public issue.
+
 ## Ways to help
 
 - **Try it in Tamil and report what goes wrong:** the question, what it heard, what it said, and what

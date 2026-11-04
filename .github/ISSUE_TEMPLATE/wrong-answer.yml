@@ -1,0 +1,45 @@
+name: Wrong or unsafe answer
+description: The voice agent misheard, answered wrongly, or gave unsafe advice
+title: "Answer: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tamil, Tanglish or English are all fine. Please don't include anyone's personal details, or a recording of anyone who hasn't agreed to share it. Security problems go to SECURITY.md, not here.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What went wrong
+      options:
+        - It misheard me
+        - Wrong answer
+        - Unsafe advice
+        - It should have handed off (108, a doctor, an office)
+        - It sounded wrong
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: What you said
+      description: Your question, as you said it.
+    validations:
+      required: true
+  - type: textarea
+    id: heard
+    attributes:
+      label: What it heard
+      description: The transcript, if you have it.
+  - type: textarea
+    id: answer
+    attributes:
+      label: What it said
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What it should have said
+    validations:
+      required: true
