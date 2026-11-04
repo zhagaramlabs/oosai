@@ -1,9 +1,9 @@
 # Oosai — a Tamil speech-to-speech voice agent
 
-Updated: 2026-11-03 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
+Updated: 2026-11-04 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
 push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far).
-Kuyil, a fast tiny Tamil TTS, now has its own repo; its 9-run size ladder is training on the GPU
-(§12 item 6)
+Kuyil, a fast tiny Tamil TTS, has its own repo; all three trained sizes are as intelligible as the
+recordings and run 15× faster than real time on one CPU thread; listeners pick a size next (§12 item 6)
 
 Part of [Zhagaram Labs](https://zhagaramlabs.com). Related repos:
 [uraikal](https://github.com/zhagaramlabs/uraikal) (the Tamil benchmark and text library this imports)
@@ -611,5 +611,8 @@ Suggested timing: submit after Phase 0 is complete, so the paper also has TTS an
    - Here, `KUYIL_CKPT=../kuyil/data/runs/<run>/best.pt .venv/bin/python eval/tts_samples.py kuyil`
      speaks the 10 test sentences, and `eval/run_asr.py` scores the held-out set that Kuyil's
      `synth.py --test` writes.
-   - Next: the size ladder finishes on the shared H100 pod (about 04:30 UTC on 11-04, then backed up
-     to R2). Then score it, and native listeners pick a size.
+   - Done 2026-11-04: the size ladder (1.4M, 5M, 20M × 3 seeds) trained on the H100 and is backed up
+     to R2. On the 125 held-out sentences IndicConformer's character error is 2.9–3.0% at every size,
+     against 2.9% on the original recordings (results in Kuyil's README).
+   - Next: native listeners pick a size (`../kuyil/results/listen_ladder.wav`), then wire the chosen
+     Kuyil into the voice loop in place of the 30 s wait.
