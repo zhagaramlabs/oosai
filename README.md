@@ -1,8 +1,14 @@
 # Oosai — a Tamil speech-to-speech voice agent
 
-Updated: 2026-11-02 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
-push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far)
-· Git repo initialized, nothing committed yet
+Updated: 2026-11-03 · Status: Phase 0 done except native ratings; Phase 1 step 5 done (a
+push-to-talk Tamil voice loop runs on the Mac, with the safety rules in code; too slow so far).
+Kuyil, a fast tiny Tamil TTS, now has its own repo; its 9-run size ladder is training on the GPU
+(§12 item 6)
+
+Part of [Zhagaram Labs](https://zhagaramlabs.com). Related repos:
+[uraikal](https://github.com/zhagaramlabs/uraikal) (the Tamil benchmark and text library this imports)
+and [kuyil](https://github.com/zhagaramlabs/kuyil) (the fast Tamil voice). To help, see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 "Oosai" (ஓசை) means "sound" in Tamil. (Named Osai, briefly Oli, then Oosai on 2026-10-29. Project folder: `~/ai/zhagaramlabs/oosai` (moved from `~/ai/Tamil/Oli` on 2026-10-29). `.venv/bin` scripts and `eval/data/fleurs_ta/test.tsv` store absolute paths: after any move, rewrite the old path in both with `sed`, or recreate `.venv` and rerun `eval/prep_fleurs.py`.)
 
@@ -167,7 +173,7 @@ Only worth starting after the pipeline works and real conversation data exists. 
     not dialogue.
   - Also: the Vakyansh/EkStep Tamil models (one was fine-tuned on 900 h), and synthetic
     dialogues (an LLM writes Tamil conversations and IndicF5 voices them in many voices).
-  - Local copy: IndicTTS Tamil goes in `data/indictts_ta/` (gitignored, ~8.4 GB).
+  - Local copy: IndicTTS Tamil is in the kuyil repo's `data/indictts_ta/` (gitignored, ~8.4 GB).
 - **Cost estimate (2026-10-29),** at about $2.50 per H100-hour (§9). These are my extrapolations
   from published runs, not quotes, and they include roughly 2–3× for failed and tuning runs:
 
@@ -599,3 +605,11 @@ Suggested timing: submit after Phase 0 is complete, so the paper also has TTS an
 5. **Accuracy:** a fresh set of test questions (the rules were tuned on these 30), a sturdier
    router (sup03 flipped to an invented answer when the calculator tool was added), and real
    tools behind `check` and the actions.
+6. **Kuyil, the fast voice**: a PiVo-style TTS of a few million parameters to replace the 30 s wait.
+   It has its own repo, `../kuyil` (`github.com/zhagaramlabs/kuyil`), whose README holds the steps,
+   commands and status. Plan: lab repo `brainstorm/2026-11-02-tamil-tiny-tts-plan.md`.
+   - Here, `KUYIL_CKPT=../kuyil/data/runs/<run>/best.pt .venv/bin/python eval/tts_samples.py kuyil`
+     speaks the 10 test sentences, and `eval/run_asr.py` scores the held-out set that Kuyil's
+     `synth.py --test` writes.
+   - Next: the size ladder finishes on the shared H100 pod (about 04:30 UTC on 11-04, then backed up
+     to R2). Then score it, and native listeners pick a size.

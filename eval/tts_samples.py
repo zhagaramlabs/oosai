@@ -2,6 +2,7 @@
 
   .venv/bin/python eval/tts_samples.py indicspeak
   .venv/bin/python eval/tts_samples.py indicf5
+  KUYIL_CKPT=../kuyil/data/runs/<run>/best.pt .venv/bin/python eval/tts_samples.py kuyil
 
 The 10 sentences are Sarvam 30B replies to the test questions (2026-10-29): Tanglish, quantities, a
 date, digits, English in Latin script, a question. Audio goes to eval/results/tts/<model>_<voice>/
@@ -76,9 +77,19 @@ def indicf5():
     return {"PAN_F_example": run}, U.target_sample_rate
 
 
+def kuyil():
+    """Our PiVo-style model (the kuyil repo, checked out next to this one); the checkpoint comes from KUYIL_CKPT."""
+    import os
+    sys.path.insert(0, str(HERE.resolve().parent.parent / "kuyil"))
+    from synth import load
+
+    speak, voices = load(os.environ["KUYIL_CKPT"])
+    return {v: (lambda text, v=v: speak(text, v)) for v in voices}, 16000
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("model", choices=["indicspeak", "indicf5"])
+    p.add_argument("model", choices=["indicspeak", "indicf5", "kuyil"])
     a = p.parse_args()
 
     rows = list(csv.DictReader(open(HERE / "tts_sentences.tsv"), delimiter="\t"))
